@@ -1,18 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color: #1c1917;
-  background: linear-gradient(180deg, #f7fee7 0%, #fafaf9 45%, #fffbeb 100%);
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-body {
-  margin: 0;
-  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: transparent;
+.heatmap-overlay {
+    background: radial-gradient(circle at 40% 50%, rgba(255, 0, 0, 0.4) 0%, rgba(255, 0, 0, 0) 40%),
+                radial-gradient(circle at 60% 30%, rgba(0, 0, 255, 0.3) 0%, rgba(0, 0, 255, 0) 50%);
 }
 
-#root {
-  min-height: 100vh;
-}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #717a6b; border-radius: 10px; }
+

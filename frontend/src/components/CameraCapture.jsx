@@ -13,7 +13,7 @@ function fileToBase64(file) {
   });
 }
 
-export default function CameraCapture({ onImageChange }) {
+export default function CameraCapture({ onImageChange, image, onReset }) {
   const { videoRef, stream, error, startCamera, stopCamera } = useCamera();
   const canvasRef = useRef(null);
   const [mode, setMode] = useState("upload");
@@ -24,6 +24,14 @@ export default function CameraCapture({ onImageChange }) {
       URL.revokeObjectURL(preview);
     }
   }, [preview]);
+
+  useEffect(() => {
+    if (image?.previewUrl) {
+      setPreview(image.previewUrl);
+    } else {
+      setPreview("");
+    }
+  }, [image]);
 
   async function handleFileChange(event) {
     const file = event.target.files?.[0];
@@ -59,20 +67,20 @@ export default function CameraCapture({ onImageChange }) {
   }
 
   return (
-    <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200">
-      <div className="flex gap-3">
+    <>
+      <div className="flex bg-surface-container rounded-none p-1 border-2 border-on-surface">
         <button
-          className={`rounded-full px-4 py-2 text-sm font-semibold ${mode === "upload" ? "bg-cropscan-leaf text-white" : "bg-stone-100"}`}
+          className={`flex-1 py-2 font-label-caps text-label-caps ${mode === "upload" ? "bg-on-surface text-white" : "text-on-surface hover:bg-surface-container-high"}`}
           onClick={() => {
             setMode("upload");
             stopCamera();
           }}
           type="button"
         >
-          File Upload
+          Upload
         </button>
         <button
-          className={`rounded-full px-4 py-2 text-sm font-semibold ${mode === "camera" ? "bg-cropscan-leaf text-white" : "bg-stone-100"}`}
+          className={`flex-1 py-2 font-label-caps text-label-caps ${mode === "camera" ? "bg-on-surface text-white" : "text-on-surface hover:bg-surface-container-high"}`}
           onClick={() => {
             setMode("camera");
             startCamera();
@@ -83,23 +91,29 @@ export default function CameraCapture({ onImageChange }) {
         </button>
       </div>
 
-      {mode === "upload" ? (
-        <label className="mt-5 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-10 text-center">
-          <span className="text-sm font-medium text-stone-700">Choose a leaf image</span>
-          <input className="hidden" type="file" accept="image/*" onChange={handleFileChange} />
-        </label>
+      {!preview ? (
+          mode === "upload" ? (
+            <label className="border-2 border-dashed border-outline bg-surface-container-low h-64 flex flex-col items-center justify-center gap-4 text-outline hover:text-primary hover:border-primary hover:bg-primary-container/5 transition-all cursor-pointer group">
+              <span className="material-symbols-outlined text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>photo_camera</span>
+              <p className="font-body-md text-center px-8 text-on-surface">Drop your leaf sample here or click to browse</p>
+              <input className="hidden" type="file" accept="image/*" onChange={handleFileChange} />
+            </label>
+          ) : (
+            <div className="h-64 relative border-2 border-on-surface overflow-hidden bg-surface-container-low flex flex-col items-center justify-center">
+              <video ref={videoRef} autoPlay playsInline className="absolute inset-0 w-full h-full object-cover" />
+              <button className="relative z-10 rounded-full bg-primary text-white font-label-caps px-6 py-2 border-2 border-on-surface shadow-[2px_2px_0_0_#191d17]" onClick={handleCapture} type="button">
+                Capture Leaf
+              </button>
+              {error && <p className="relative z-10 text-sm text-error bg-error-container px-2 py-1 mt-2">{error}</p>}
+            </div>
+          )
       ) : (
-        <div className="mt-5 space-y-3">
-          <video ref={videoRef} autoPlay playsInline className="w-full rounded-2xl bg-stone-200" />
-          <button className="rounded-full bg-amber-500 px-4 py-2 font-semibold text-white" onClick={handleCapture} type="button">
-            Capture Leaf
-          </button>
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        </div>
+          <div className="h-64 border-2 border-on-surface relative">
+            <img alt="Selected leaf" className="w-full h-full object-cover border-2 border-transparent" src={preview} />
+            <button onClick={onReset} className="absolute top-2 right-2 bg-white border border-on-surface text-on-surface text-xs font-label-caps px-2 py-1">Retake</button>
+          </div>
       )}
-
-      {preview ? <img alt="Selected leaf preview" className="mt-5 w-full rounded-2xl object-cover" src={preview} /> : null}
       <canvas ref={canvasRef} className="hidden" />
-    </div>
+    </>
   );
 }

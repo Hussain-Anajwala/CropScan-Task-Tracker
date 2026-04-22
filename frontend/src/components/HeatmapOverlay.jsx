@@ -5,19 +5,23 @@ export default function HeatmapOverlay({ imageSrc, heatmapBase64 }) {
   if (!imageSrc) return null;
 
   return (
-    <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-cropscan-leaf">Explainability</h3>
-        <button className="rounded-full bg-stone-100 px-3 py-1 text-sm font-medium" onClick={() => setShowHeatmap((value) => !value)} type="button">
-          {showHeatmap ? "Hide Heatmap" : "Show Heatmap"}
+    <div className="bg-white border-2 border-on-surface overflow-hidden">
+      <div className="p-4 border-b-2 border-on-surface bg-surface-container flex items-center justify-between">
+        <h3 className="font-label-caps text-label-caps text-on-surface">EXPLAINABILITY</h3>
+        <button 
+          className="font-label-caps text-label-caps bg-on-surface text-white px-4 py-1 hover:bg-surface-container-highest hover:text-on-surface transition-colors shadow-[2px_2px_0_0_#191d17]" 
+          onClick={() => setShowHeatmap((value) => !value)} 
+          type="button"
+        >
+          {showHeatmap ? "HIDE HEATMAP" : "SHOW HEATMAP"}
         </button>
       </div>
-      <div className="relative overflow-hidden rounded-2xl">
-        <img alt="Leaf scan" className="w-full" src={imageSrc} />
+      <div className="relative overflow-hidden bg-surface-container-low min-h-64 flex items-center justify-center">
+        <img alt="Leaf scan" className="w-full h-full object-cover" src={imageSrc} />
         {showHeatmap && heatmapBase64 ? (
           <img
             alt="Grad-CAM overlay"
-            className="absolute inset-0 h-full w-full object-cover opacity-70"
+            className="absolute inset-0 h-full w-full object-cover mix-blend-multiply opacity-80"
             src={`data:image/png;base64,${heatmapBase64}`}
           />
         ) : null}

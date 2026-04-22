@@ -94,69 +94,101 @@ export default function Home() {
   }
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cropscan-soil">Field-ready scan flow</p>
-          <h2 className="mt-2 text-3xl font-bold text-stone-900">Capture a leaf and get an advisory.</h2>
-          {statusText ? <p className="mt-2 text-sm text-stone-600">{statusText}</p> : null}
-        </div>
-        <LanguageSelector onChange={setLanguage} value={language} />
-      </div>
-
-      {error ? <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
-
-      {demoSamples.length ? (
-        <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-10">
+      {/* Left Column: Input & Capture */}
+      <section className="flex flex-col gap-8">
+        <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cropscan-soil">Demo Mode</p>
-              <h3 className="mt-1 text-lg font-semibold text-stone-900">Use a prepared sample image</h3>
+            <h1 className="font-display text-display text-primary leading-tight mb-2">Identify.<br />Understand.<br />Act.</h1>
+            <p className="font-body-lg text-body-lg text-on-surface-variant max-w-sm">Precision disease detection powered by Field Intelligence.</p>
             </div>
-            <span className="text-sm text-stone-500">Fastest way to show the full pipeline live</span>
-          </div>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <LanguageSelector onChange={setLanguage} value={language} />
+        </div>
+
+        {error && <div className="bg-error-container text-on-error-container px-4 py-3 font-body-md border-2 border-on-surface">{error}</div>}
+        {statusText && <p className="font-body-md text-primary">{statusText}</p>}
+
+        {/* Demo Samples Strip */}
+        <div className="flex flex-col gap-3">
+          <span className="font-label-caps text-label-caps text-outline uppercase">Quick Samples</span>
+          <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
             {demoSamples.map((sample) => (
               <button
                 key={sample.id}
-                className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-left transition hover:border-cropscan-leaf hover:bg-lime-50"
                 onClick={() => selectDemoSample(sample)}
-                type="button"
+                className="shrink-0 w-24 h-24 border-2 border-outline hover:border-primary focus:border-primary transition-all overflow-hidden bg-white"
+                title={`${sample.crop} - ${sample.disease}`}
               >
-                <p className="font-semibold text-stone-900">{sample.crop}</p>
-                <p className="mt-1 text-sm text-stone-600">{sample.disease}</p>
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"}${sample.image_url}`}
+                  alt={`${sample.crop} sample`}
+                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all"
+                />
               </button>
             ))}
           </div>
         </div>
-      ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="space-y-6">
-          <CameraCapture onImageChange={setImage} />
+        {/* Capture Card */}
+        <div className="bg-white border-2 border-on-surface p-6 flex flex-col gap-6">
+          <CameraCapture onImageChange={setImage} image={image} onReset={resetFlow} />
+          
           <button
-            className="w-full rounded-full bg-cropscan-leaf px-5 py-3 text-base font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:bg-stone-400"
+            className="h-11 bg-primary text-white font-label-caps text-label-caps flex items-center justify-center gap-2 hover:opacity-90 active:translate-y-0.5 transition-all border-2 border-on-surface shadow-[4px_4px_0_0_#191d17] disabled:opacity-50 disabled:shadow-none disabled:active:translate-y-0"
             disabled={!image?.file || isLoading}
             onClick={analyzeLeaf}
             type="button"
           >
-            {isLoading ? "Analyzing..." : "Analyze Leaf"}
+            <span className="material-symbols-outlined mb-0.5">analytics</span>
+            {isLoading ? "ANALYZING..." : "ANALYZE LEAF"}
           </button>
         </div>
+      </section>
 
-        <div className="space-y-6">
-          <ResultCard
-            advisoryData={advisoryData}
-            advisoryText={advisory}
-            isLoading={isLoading}
-            onReset={resetFlow}
-            onRetry={analyzeLeaf}
-            prediction={prediction}
-          />
-          {prediction ? <HeatmapOverlay heatmapBase64={prediction.heatmap} imageSrc={image?.previewUrl || ""} /> : null}
-          <AudioPlayer audioBase64={audioBase64} />
-        </div>
-      </div>
-    </section>
+      {/* Right Column: Analysis Results */}
+      <section className="flex flex-col gap-6">
+        <ResultCard
+          advisoryData={advisoryData}
+          advisoryText={advisory}
+          isLoading={isLoading}
+          onReset={resetFlow}
+          onRetry={analyzeLeaf}
+          prediction={prediction}
+          audioBase64={audioBase64}
+        />
+        
+        {prediction?.heatmap && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <HeatmapOverlay heatmapBase64={prediction.heatmap} imageSrc={image?.previewUrl || ""} />
+             
+             {/* Environmental Stats Bento Item */}
+             {prediction?.environmental_stats && (
+                 <div className="grid grid-cols-1 gap-6">
+                    <div className="bg-primary text-white border-2 border-on-surface p-6 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                        <span className="material-symbols-outlined text-3xl">thermostat</span>
+                        <span className="font-label-caps text-label-caps opacity-80 uppercase">{prediction.environmental_stats.sensor}</span>
+                        </div>
+                        <div>
+                        <div className="text-5xl font-display font-black leading-none mb-1">{prediction.environmental_stats.temperature}°C</div>
+                        <p className="font-body-md opacity-90">Optimal growth window</p>
+                        </div>
+                    </div>
+                    <div className="bg-secondary-container border-2 border-on-surface p-6 flex flex-col justify-between">
+                        <div className="flex justify-between items-start text-on-secondary-container">
+                        <span className="material-symbols-outlined text-3xl">humidity_mid</span>
+                        <span className="font-label-caps text-label-caps opacity-80 uppercase">Humidity Level</span>
+                        </div>
+                        <div className="text-on-secondary-container">
+                        <div className="text-5xl font-display font-black leading-none mb-1">{prediction.environmental_stats.humidity}%</div>
+                        <p className="font-body-md opacity-90 text-on-secondary-container">Pathogen risk elevation</p>
+                        </div>
+                    </div>
+                 </div>
+             )}
+          </div>
+        )}
+      </section>
+    </div>
   );
 }

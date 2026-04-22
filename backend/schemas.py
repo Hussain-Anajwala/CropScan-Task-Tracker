@@ -32,6 +32,7 @@ class PredictResponse(BaseModel):
     top_k: list[TopKPrediction] = Field(default_factory=list)
     heatmap: str | None = None
     inference_time_ms: float
+    environmental_stats: dict | None = None
 
     model_config = ConfigDict(populate_by_name=True)
 

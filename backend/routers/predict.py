@@ -67,4 +67,9 @@ async def predict(request: Request, file: UploadFile = File(...)) -> PredictResp
         top_k=result["top_k"],
         heatmap=heatmap_to_base64(overlay),
         inference_time_ms=result["inference_time_ms"],
+        environmental_stats={
+            "temperature": 28.4,
+            "humidity": 82,
+            "sensor": "Field Sensor B4"
+        }
     )

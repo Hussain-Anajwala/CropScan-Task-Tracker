@@ -30,22 +30,24 @@ export default function AudioPlayer({ audioBase64 }) {
   }
 
   return (
-    <div className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-stone-200">
-      <div className="flex flex-wrap items-center gap-3">
-        <button className="rounded-full bg-cropscan-leaf px-4 py-2 font-semibold text-white" onClick={togglePlayback} type="button">
-          {playing ? "Pause" : "Play"}
-        </button>
-        <select
-          className="rounded-full border border-stone-300 bg-white px-4 py-2"
-          onChange={(event) => setSpeed(Number(event.target.value))}
-          value={speed}
-        >
-          <option value={0.75}>0.75x</option>
-          <option value={1}>1x</option>
-          <option value={1.25}>1.25x</option>
-        </select>
-      </div>
-      <audio ref={audioRef} className="mt-4 w-full" controls onEnded={() => setPlaying(false)} src={source} />
+    <div className="bg-surface-bright flex flex-wrap items-center gap-4">
+      <button 
+        className="font-label-caps text-label-caps border-2 border-on-surface bg-on-surface text-white px-4 py-2 hover:bg-surface-container-highest hover:text-on-surface transition-colors shadow-[2px_2px_0_0_#191d17]" 
+        onClick={togglePlayback} 
+        type="button"
+      >
+        {playing ? "PAUSE" : "PLAY AUDIO"}
+      </button>
+      <select
+        className="bg-transparent font-data-mono text-data-mono border-b-2 border-on-surface px-2 py-1 outline-none text-on-surface hover:bg-surface-container-low transition-colors"
+        onChange={(event) => setSpeed(Number(event.target.value))}
+        value={speed}
+      >
+        <option value={0.75}>0.75x Speed</option>
+        <option value={1}>1.0x Speed</option>
+        <option value={1.25}>1.25x Speed</option>
+      </select>
+      <audio ref={audioRef} className="hidden" onEnded={() => setPlaying(false)} src={source} />
     </div>
   );
 }

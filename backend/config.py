@@ -35,7 +35,7 @@ class Settings(BaseSettings):
 
     api_host: str = "0.0.0.0"
     api_port: int = 8000
-    cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"])
+    cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173", "http://localhost:5174"])
 
     mlflow_tracking_uri: str = "http://localhost:5000"
     mlflow_backend_store_uri: str = "./mlruns"
