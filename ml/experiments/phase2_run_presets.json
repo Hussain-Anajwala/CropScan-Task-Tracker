@@ -1,0 +1,33 @@
+{
+  "run1": {
+    "model": "efficientnet_b4",
+    "epochs": 30,
+    "batch_size": 32,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "data_root": "data/processed/plantvillage",
+    "output_name": "efficientnet_b4_best.pth",
+    "notes": "Baseline run on PlantVillage only."
+  },
+  "run2": {
+    "model": "vit_base_patch16_224",
+    "epochs": 30,
+    "batch_size": 32,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "data_root": "data/processed/plantvillage",
+    "output_name": "vit_base_patch16_224_best.pth",
+    "notes": "Architecture comparison run on PlantVillage only."
+  },
+  "run3": {
+    "model": "efficientnet_b4",
+    "epochs": 15,
+    "batch_size": 32,
+    "learning_rate": 1e-05,
+    "weight_decay": 0.0001,
+    "data_root": "data/processed/combined",
+    "checkpoint": "models/weights/efficientnet_b4_best.pth",
+    "output_name": "phase2_finetuned_best.pth",
+    "notes": "Fine-tuning run on PlantVillage + PlantDoc combined."
+  }
+}
